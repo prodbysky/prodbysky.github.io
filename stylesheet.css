@@ -1,9 +1,17 @@
-body {
+html {
     background-color: #181818;
+}
+
+body {
+    width: 50%;
+    border-radius: 30px;
+    background-color: #282828;
     color: #dddddd;
-    margin-left: 100px;
-    margin-top: 100px;
+    margin: 100px auto;
+    padding: 50px;
     line-height: normal;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
 }
 
 h1 {
@@ -23,6 +31,36 @@ p {
     font-size: 20px;
 }
 
+code {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    font-family: 'Fira Code', monospace;
+    font-size: 16px;
+    background-color: #2e2e2e;
+    color: #ffcc99;
+    border-radius: 5px;
+    padding: 4px 8px;
+}
+pre {
+    background-color: #2e2e2e;
+    color: #ffcc99;
+    padding: 16px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 16px;
+}
+
 a {
-    color: #dd9999
+    color: #dd9999;
+    text-decoration: none;
+    transition: color 1s ease;
+}
+
+a:hover {
+    color: #ffbbbb;
+    text-decoration: underline;
+}
+
+body, a, button, input, textarea {
+    transition: all 0.3s ease;
 }
