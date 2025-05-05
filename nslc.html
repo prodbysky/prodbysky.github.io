@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hello!</title>
+    <link rel="stylesheet" href="./stylesheet.css" type="text/css" />
+  </head>
+  <body>
+        <h1>nslc</h1>
+        <p>
+            This is a dev-log of my own programming language nslc,
+            that I'm making purely for fun (so far).
+            I have decided to start this whole github pages thing, just
+            because I want to have a visual way of viewing progress
+            <br>
+            The repo is available here: <a href="https://github.com/prodbysky/nslc">prodbysky/nslc</a>
+            <br>
+        </p>
+        <h2>Epilogue</h2>
+        <p>
+            Why am I doing this? Well for fun of course ;-;
+            <br>
+            I began this project by sketching out the pipeline from source code to executable
+            <br>
+            input.nsl -> tokenizer (lexer) -> ast parser -> type checker -> dead code analysis -> qbe -> executable
+            <br>
+            So yes I will be using <a>qbe</a> as the compiler backend of choice, since this is my first try at a language
+            <br>
+            Well not really, but the first serious no going back type of try
+            <br>
+            I have already decided beforehand that I won't use any parser generators (yacc, ...) since I want full control other the language
+            <br>
+            And yes before going on with the details, I tried to implement a language in Rust in the same name,
+            <br>
+            However I just felt that something was off so I switched lanes to C
+        </p>
+        <h2>Day #1</h2>
+        <p>
+            Because I'm writing this after the work is done, it's going to be a short summary
+            <br>
+            So we now have:
+            <br>
+            A basic lexer that doesn't even report errors correctly
+            <br>
+            An AST parser that uses a different way of parsing binary expressions than what I'm used to
+            <br>
+            Instead of encoding the precedence of operators via recursion I decided to use a way
+            <br>
+            I can't really describe
+            <br>
+            A really basic QBE code generation library, that will grow as this language evolves
+            <br>
+            Since so far it can only really add, subtract, divide and multiply numbers known
+            <br>
+            at compile time, and return the result
+            <br>
+            And a basic code generation module that uses the before mentioned QBE wrapper
+            <br>
+        </p>
+        <h3>Notes</h3>
+        <p>
+            <code>-fsanitize=address, -Wextra, -Wall </code> are my best buddies from now on.
+            <br>
+            <a>Nob</a> as a build system is soooooo DAMN GOOD.
+            <br>
+            Editing html from neovim is a pain for me.
+        </p>
+        <h2>Day #2</h2>
+        <p>
+            Woke up too early this morning, and found out my dad blocked my pc AND phone from the wifi
+            <br>
+            Anyways I worked on slightly better error reporting. I've decided to use line and column numbers
+            <br>
+            Did some minor things to make the code more readable
+            <br>
+            Next variables? I think it's approapriate ( I don't know how to spell that :d )
+            <br>
+            You thought. Tried to document some code instead found some serious bug that I'll debug later today.
+        </p>
+  </body>
+</html>
