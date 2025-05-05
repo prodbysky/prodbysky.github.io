@@ -76,6 +76,36 @@
             Next variables? I think it's approapriate ( I don't know how to spell that :d )
             <br>
             You thought. Tried to document some code instead found some serious bug that I'll debug later today.
+            
+            ...
+            
+            After a while of pondering, I found it:
+            
+            <code>
+            loop {
+                
+                Statement s = parser_statement(&parser);
+                
+                if (s.type == ST_ERROR) {
+                
+                    fprintf(stderr, "Failed to parse file due to invalid statement\n");
+                
+                    arrfree(parser.statements);
+                
+                    parser.statements = NULL;
+                
+                    return parser;
+                
+                }
+                
+                arrput(parser.statements, parser_statement(&parser));
+                
+            }
+            </code>
+            
+            Yes so the whole time I was just calling the function that advanced the ast parser
+            
+            Stupid.
         </p>
   </body>
 </html>
