@@ -32,7 +32,7 @@
             And yes before going on with the details, I tried to implement a language in Rust in the same name,
             However I just felt that something was off so I switched lanes to C
         </p>
-        <h2 id="day1">Day #1</h2>
+        <h2 id="day1">Day #1 - beginning of the nslc?</h2>
         <p>
             Because I'm writing this after the work is done, it's going to be a short summary
             So we now have:
@@ -48,11 +48,11 @@
         </p>
         <h3>Notes</h3>
         <p>
-            <code>-fsanitize=address, -Wextra, -Wall </code> are my best buddies from now on.
+            <code>-fsanitize=address, -Wextra, -Wall</code> are my best buddies from now on.
             <a>Nob</a> as a build system is soooooo DAMN GOOD.
             Editing html from neovim is a pain for me.
         </p>
-        <h2 id="day2">Day #2</h2>
+        <h2 id="day2">Day #2 - I was stumped</h2>
         <p>
             Woke up too early this morning, and found out my dad blocked my pc AND phone from the wifi
             Anyways I worked on slightly better error reporting. I've decided to use line and column numbers
@@ -62,9 +62,7 @@
             ...
             After a while of pondering, I found it:
         </p>
-            
-        <pre>
-<code>
+<pre><code>
 loop {
     Statement s = parser_statement(&parser);
     if (s.type == ST_ERROR) {
@@ -75,9 +73,7 @@ loop {
     }
     arrput(parser.statements, parser_statement(&parser));
 }
-</code>
-        </pre>
-            
+</code></pre>
         <p>
             Yes so the whole time I was just calling the function that advanced the ast parser
             Stupid.
@@ -87,6 +83,79 @@ loop {
         <p>
             Updated some parser and lexer functions to return just booleans instead of Statements to indicate failure
             Added parenthesized expressions (it was pretty easy tho)
+        </p>
+        <h2 id="day3">Day #3 - Variables (part 1.)</h2>
+        <p>
+            I need to decide on the way the variable assignments and definitions would look like.
+            I could make it C styled: 
+<pre><code>type name = expr;</code></pre>
+            I could make it Rust/Zig like:
+<pre><code>let / const name : type = expr;</code></pre>
+        If I go with C like types will be mandatory to be specified if I don't want to end up like C++
+        Sprinkling auto everywhere, and parsing will be harder since look-ahead would be necessary
+        If I would go with Rust/JS etc... like statements type inference will be easier to integrate,
+        since then the type will be tucked between the semicolon. Also AST parsing will be easier,
+        since no look ahead is needed.
+        Having weighed the options, I'll go with the more modern type.
+        I haven't been showing any exact code but now this feature will make our AST parser and it's associated types
+        more complicated:
+<pre><code>
+typedef enum {
+    ST_RETURN,
+    ST_VARIABLE_DEFINE, << Updated
+    ST_ERROR
+} StatementType;
+</code></pre>
+
+<pre><code>
+typedef struct {
+    StatementType type;
+    union {
+        Expr* ret;
+        struct {
+            char* name;
+            char* type;
+            Expr* value;
+        } var_def; << new inner struct in the union :0
+    } as;
+} Statement;
+</code></pre>
+        Introducing the new enum value will stop the executable from being compiled, thanks gcc NOT DEFAULT warnings
+        But this new construction (data) needs code to be created and utilized.
+        So lets go. We need to expand our ast parser since the lexer does not YET differenciate between keywords and identifiers,
+        it's unbothered by this feature so far.
+<pre><code>
+bool parser_statement(Parser* parser) {
+    ...
+    if (strcmp("let", parser_peek(parser).as.ident) == 0 || strcmp("const", parser_peek(parser).as.ident) == 0) {
+        ... Implementation
+        return true;
+    }
+    ...
+}
+</code></pre>
+
+        Actually we need to add two new token types: a colon, it will separate our variable name and type,
+        and an single equal sign.
+    <br>
+        Having made those changes, it was time to implement the parsing, and codegen.
+        Parsing the AST was a breeeeze (just because we don't subject ourselves to error handling.
+        Mostly just parser_next().
+    <br>
+        Also one thing I almost forgot. Primary expression parsing should be updated to handle variable names too.
+        Now the part I fear the most. Code generation :0000
+    <br>
+        This feature requires to expand our qbe wrapper. We need store, load, stack alloc instructions
+    <br>
+        This has stumped me.
+    <br>
+        GOD THIS IS SO STUPID. 
+    <br>
+        I need to calm down and come back to this tomorrow. Codegen is broken and the fact is I CANT SEE THE ISSUE.
+    <br>
+        Alright I think tomorrow is the day. So today we have done some cool stuff. Parsing etc. even employed some error checking.
+    <br>
+        See y'all tomorrow.
         </p>
   </body>
 </html>
