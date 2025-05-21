@@ -15,6 +15,7 @@
             The repo is available here: <a href="https://github.com/prodbysky/bulp">prodbysky/bulp</a>
             <a href="#day1">Day 1</a>
             <br>
+            <a href="#day2">Day 2</a>
         </p>
         <h2 id="day1">Day #1 - beginning of the bulp</h2>
         <p>
@@ -41,6 +42,22 @@
             I don't have code examples for this, but it's easy to write concise basic code in Odin
             <br>
             Also did some parsing for binary operators, but testing comes tomorrow I need to sleep.
+        </p>
+        <h2 id="day2">Day #2 - allocators</h2>
+        <p>
+        To parse expressions I needed allocators, due to the recursive nature of AST's.
+        <br>
+        An AST node could just be a leaf (primary expression), or non-leaf (idk how to call them), eg. binary expressions.
+        <br>
+        So I went to the <a href = "https://pkg.odin-lang.org/core/">Odin docs</a> and tried to search for an arena or bump allocator,
+        Since I'm so used to using them for parsing recursive structues. 
+        I was pleased to find an <a href="https://pkg.odin-lang.org/core/mem/#Arena">arena</a>.
+        From what I understand currently there are TWO arenas, one with dynamic backing memory, and static.
+        Concerned with simplicity I went with the statically backed one. Other than that it was pretty easy.
+        One annoying but not deal-breaking thing. Allocations return a rawptr, and an error, so I HAVE to
+        define a new binding for the ptr which will have the AstNode type associated with it. Since I have only a single
+        operator: `+`, instead of going the easy route, I immediately laid out the foundation for operator precedence.
+        Since I implemented this in the morning, tests will come later in the day.
         </p>
   </body>
 </html>
