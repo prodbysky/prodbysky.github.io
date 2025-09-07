@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bong</title>
+    <link rel="stylesheet" href="./stylesheet.css" type="text/css" />
+    <link href="https://dev.prismjs.com/themes/prism-tomorrow.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js"></script>
+</head>
+
+<body>
+    <h1>Bong</h1>
+    <p>
+        <a>Repo (TBD)</a>
+        <a href="#Day 1">Skip my rambling</a>
+    </p>
+    <h2>Motivation</h2>
+    <p>
+        Essentially I'm annoyed at many languages (I hate them all equally).
+        <br>
+        C is really damn good for an old language but having to write an additional
+        standard library on top of libc gets annoying really quick.
+        <br>
+        Rust is a good modern language however interacting with C code manually is pretty bad.
+        The borrow checker, in my opinion, is not a good solution to memory safety.
+        <br>
+        C++ needs a LOT of linters/rules to be a readable and maintainable language, and it is really ugly
+        <br>
+        Odin is really cool, one of my favourites right now, but the `go` way of handling errors, where you don't have
+        to check for errors is bad. Again in my opinion.
+        <br>
+        Zig is really annoying with all the "control" you get on the code, uses LLVM (applies to Rust), which makes
+        the compilation times really slow
+        <br>
+        So that's why I want to make my own language. No LLVM, and just my personal preferences in a language.
+        I'm going to write it in C, since using a barebones language makes it easier to self-host the language and
+        that's it.
+    </p>
+    <h2 id="Day 1">Day 1</h2>
+    <p>
+        Before any development can begin, we need to decide on the build system to use.
+        <br>
+        As for the build system, I'm really drawn to Tsodings <a href="https://github.com/tsoding/nob.h">nob.h</a>
+        It's really simple (being a single header file), really extensible, cross-platform, and is just a pleasure to
+        use.
+        Also, since it is a header we can use it within our project. So I'm just going to go with it.
+        <br>
+        To build our current project (single main.c) file we just do this in nob.c (our build script):
+    <pre>
+        <code class="language-clike">
+// This is an stb style library therefore this #define includes the implementations of the library
+#define NOB_IMPLEMENTATION
+#define NOB_STRIP_PREFIX
+#include "nob.h"
+
+// We have to take the arguments so that the build system can recompile itself when we change it
+int main(int argc, char** argv) {
+    NOB_GO_REBUILD_URSELF(argc, argv);
+    Cmd c = {0};
+    mkdir_if_not_exists("build");
+    cmd_append(&c, "cc", "src/main.c", "-o", "build/bongc", "-Wall", "-Wextra");
+    if (!cmd_run_sync_and_reset(&c)) return false;
+}
+        </code>
+    </pre>
+    Yes. That's it just build nob.c to an executable and run it. When the source (nob.c) is changed it will
+    automatically rebuild and run the new version of the script.
+    No "configuration" step. Just build and run.
+    <br>
+    Nob also provides primitives for string handling (String, and StringView), however for dynamic memory allocations we
+    will have to implement an <a href="https://www.rfleury.com/p/untangling-lifetimes-the-arena-allocator">arena
+        allocator</a>.
+    Why do I want to have arenas?
+    <ol>
+        <li> It makes lifetime management easier, you can make lots of tiny allocations, and keep that region in cache
+            (since you will hit it so many times). </li>
+        <li> Freeing trees (such as ASTs) is way easier since you don't have to do a recursive traversal</li>
+    </ol>
+    The entire interface to an arena is this:
+    <pre>
+        <code class="language-clike">
+typedef struct {
+    uint8_t* buffer;
+    size_t capacity;
+    size_t used;
+} Arena;
+
+Arena arena_new(size_t size) {
+    Arena a = {0};
+    a.capacity = size;
+    a.buffer = calloc(size, sizeof(uint8_t));
+    assert(a.buffer && "Ran out of RAM?");
+    return a;
+}
+
+void* arena_alloc(Arena* arena, size_t size) {
+    assert(a->buffer);
+    assert(a->used + size < arena->capacity);
+    void* buf = arena->buffer + arena->used;
+    arena->used += size;
+    return buf;
+}
+
+void arena_free(Arena* arena) {
+    assert(a->buffer);
+    free(a->buffer);
+    memset(arena, 0, sizeof(Arena));
+}
+        </code>
+    </pre>
+    I just do assertions instead of error handling since if we can out of memory, what can we do?
+    <br>
+    It's getting late. So this is all I did in day 1, holy productivity...
+    </p>
+</body>
+
+</html>
