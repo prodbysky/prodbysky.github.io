@@ -12,7 +12,8 @@
 <body>
     <h1>Bong</h1>
     <p>
-        <a>Repo (TBD)</a>
+        <a href="https://github.com/prodbysky/bong">Github repository</a>
+        <br>
         <a href="#Day 1">Skip my rambling</a>
     </p>
     <h2>Motivation</h2>
@@ -37,14 +38,15 @@
         I'm going to write it in C, since using a barebones language makes it easier to self-host the language and
         that's it.
     </p>
-    <h2 id="Day 1">Day 1</h2>
+    <h2 id="Day 1">Day 1 - Some book keeping </h2>
+    <a href="https://github.com/prodbysky/bong/commit/8252f3beb656010e22d61c4ee88639319973cf08">Commits covered</a>
     <p>
         Before any development can begin, we need to decide on the build system to use.
         <br>
         As for the build system, I'm really drawn to Tsodings <a href="https://github.com/tsoding/nob.h">nob.h</a>
         It's really simple (being a single header file), really extensible, cross-platform, and is just a pleasure to
         use.
-        Also, since it is a header we can use it within our project. So I'm just going to go with it.
+        So I'm just going to go with it.
         <br>
         To build our current project (single main.c) file we just do this in nob.c (our build script):
     <pre>
@@ -64,11 +66,12 @@ int main(int argc, char** argv) {
 }
         </code>
     </pre>
+        NOTE: I will not document all changes to this script to see them you can go to <a href="https://github.com/prodbysky/bong/blob/master/nob.c">here</a><br>
     Yes. That's it just build nob.c to an executable and run it. When the source (nob.c) is changed it will
     automatically rebuild and run the new version of the script.
     No "configuration" step. Just build and run.
     <br>
-    Nob also provides primitives for string handling (String, and StringView), however for dynamic memory allocations we
+    We will need dynamic memory allocations therefore, we
     will have to implement an <a href="https://www.rfleury.com/p/untangling-lifetimes-the-arena-allocator">arena
         allocator</a>.
     Why do I want to have arenas?
@@ -94,18 +97,18 @@ Arena arena_new(size_t size) {
     return a;
 }
 
-void* arena_alloc(Arena* arena, size_t size) {
+void* arena_alloc(Arena* a, size_t size) {
     assert(a->buffer);
-    assert(a->used + size < arena->capacity);
-    void* buf = arena->buffer + arena->used;
-    arena->used += size;
+    assert(a->used + size < a->capacity);
+    void* buf = a->buffer + a->used;
+    a->used += size;
     return buf;
 }
 
-void arena_free(Arena* arena) {
+void arena_free(Arena* a) {
     assert(a->buffer);
     free(a->buffer);
-    memset(arena, 0, sizeof(Arena));
+    memset(a, 0, sizeof(Arena));
 }
         </code>
     </pre>
@@ -113,7 +116,55 @@ void arena_free(Arena* arena) {
     <br>
     It's getting late. So this is all I did in day 1, holy productivity...
     </p>
-    <h2 id="Day 2">Day 2</h2>
+    <h2 id="Day 2">Day 2 - Take a look at some tokens</h2>
+    <a href="https://github.com/prodbysky/bong/commit/8252f3beb656010e22d61c4ee88639319973cf08">Commits covered</a>
+    <p>
+        Before we can extract the tokens, we have to read the file into memory.
+        Since nob requires some hoops to jump through to use a custom allocator and I don't want to make
+        our allocator global (to be more explicit). I'll implement the famous da_append(...) macro, and accept an arena.
+        Also the String, and StringView primitives to make strings easier in C. To explain them, they are just non-null terminated strings,
+        String is an owned string (like Rusts String) and String_View is a view (&str), it's immutable.
+        To ease reporting errors in the future I'll also define a struct for a source file (String of the source contents, and a name of the file)
+        <br>
+        When it comes to lexing/tokenizing source code, the most common way to represent the results
+        of this process, is a <a href = "https://en.wikipedia.org/wiki/Tagged_union">tagged union</a>.
+        <br>
+        Because I just want to layout the structure of the lexer, I'm going to implement a single token kind - an unsigned integer.
+    <pre>
+        <code class="language-clike">
+typedef enum {
+    TT_NUMBER
+} TokenType;
+
+typedef struct {
+    TokenType type;
+    size_t offset;
+    union {
+        uint64_t number;
+    };
+} Token;
+        </code>
+    </pre>
+        Ok so after some bickering with C, we have our own specified da_push generic macro for dynamic arrays.
+        Time to actually lex code.
+        This is our lexer state
+    <pre>
+        <code>
+typedef struct {
+    SourceFile const* source;
+    size_t pos;
+} Lexer;
+        </code>
+    </pre>
+    The `SourceFile` keeps track of the actual content and name of the file that we are processing.
+    <br>
+    Since our current task is so simple we can just skip whitespace (since that is insignificant, looking at python...)
+    This logic is described in this
+        <a href="https://github.com/prodbysky/bong/blob/8252f3beb656010e22d61c4ee88639319973cf08/src/main.c#L103C1-L103C44">code snippet</a>
+    And just do the lexing, which can be viewed in the repo now :)
+
+    
+    </p>
 </body>
 
 </html>
