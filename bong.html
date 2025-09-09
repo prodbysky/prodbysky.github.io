@@ -169,7 +169,14 @@ typedef struct {
     <br>
     I hope you appreaciate my web dev skillz (surely)
     <br>
-    Time for a parser (weeeeeeeeeeeeeeee)
+    Time for a parser (weeeeeeeeeeeeeeee).
+    This is the part I hate just because operator precedence feels like magic, even though I understand that. 
+    We essentially just put the operators with "higher binding power" lower in the tree.
+    The helping hand is the <a href="https://craftinginterpreters.com/">Crafting interpreters</a> book by Robert Nystrom, if you want to build a language that book is a MUST have.
+    The book is paid so I don't know the legality of providing a snippet of the <a href="https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form">BNF</a>, however such BNF can be derived by hand (which I did in my prior projects when I didn't know about the previously mentioned book.
+    What I forgot about the lexer is that we need to report errors. I was already keeping track of the bbyte offset of the token within the file, but I wasn't tracking the length and the origin of the token, so I need to fix that up that up real quick.
+    <br>
+        Ok so C was a bit more of a beast than I expected however I pulled <a href="https://github.com/prodbysky/bong/commit/54d38aaa16bbaa0113212d490e77c64262ff2951">through</a>
     </p>
 </body>
 
