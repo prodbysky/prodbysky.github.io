@@ -160,9 +160,9 @@ typedef struct {
     <br>
     Since our current task is so simple we can just skip whitespace (since that is insignificant, looking at python...)
     This logic is described in this
-        <a href="https://github.com/prodbysky/bong/blob/8252f3beb656010e22d61c4ee88639319973cf08/src/main.c#L103C1-L103C44">code snippet</a>
+    <a href="https://github.com/prodbysky/bong/blob/8252f3beb656010e22d61c4ee88639319973cf08/src/main.c#L103C1-L103C44">code snippet</a>
     And just do the lexing, which can be viewed in the repo now :)
-    <h2 id="Day 3">Day 3 - Expressions and operators</h2>
+    <h2 id="Day 3">Day 3 - Discussing parsing trees, and error reporting</h2>
     Ok first I just implemented a printer which is not that complicated (<a href = "https://github.com/prodbysky/bong/blob/6e2453e27b7a162872fb353d1ae34d77459468e3/src/main.c#L110">Source</a>)
     <br>
     And now we need operators, of which I'll just go with `+` and `-`. Since they are single characters lexing them is really easy (<a href="https://github.com/prodbysky/bong/blob/f47063e72e3052d379b791c2155b1703c2dbf4ff/src/main.c#L140">Source</a>).
@@ -177,6 +177,10 @@ typedef struct {
     What I forgot about the lexer is that we need to report errors. I was already keeping track of the bbyte offset of the token within the file, but I wasn't tracking the length and the origin of the token, so I need to fix that up that up real quick.
     <br>
         Ok so C was a bit more of a beast than I expected however I pulled <a href="https://github.com/prodbysky/bong/commit/54d38aaa16bbaa0113212d490e77c64262ff2951">through</a>
+    <h2 id="Day 4">Day 4 - Expressions</h2>
+    Time to implement some expression parsing, since Bong will be expression based (no distinction between statements and expressions)
+    Everything: if, while, let statements, will be an expression.
+    I did implement the expressions after a slight hiccup when wrapping my head around the way that data flows during parsing of the binary expressions, however I did implement the most basic thing (+ and -).
     </p>
 </body>
 
